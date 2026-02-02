@@ -1,0 +1,13 @@
+smart_socket\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c
+smart_socket\heap_4.o: D:\keil\core\ARM\ARMCC\Bin\..\include\stdlib.h
+smart_socket\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
+smart_socket\heap_4.o: D:\keil\core\ARM\ARMCC\Bin\..\include\stddef.h
+smart_socket\heap_4.o: D:\keil\core\ARM\ARMCC\Bin\..\include\stdint.h
+smart_socket\heap_4.o: ../Core/Inc/FreeRTOSConfig.h
+smart_socket\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
+smart_socket\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
+smart_socket\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h
+smart_socket\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3/portmacro.h
+smart_socket\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
+smart_socket\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
+smart_socket\heap_4.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
