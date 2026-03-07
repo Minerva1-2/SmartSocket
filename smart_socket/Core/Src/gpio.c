@@ -51,34 +51,34 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(led_GPIO_Port, led_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1|GPIO_PIN_8, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, ds18b20_Pin|relay_Pin|buzzer_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(dht11_GPIO_Port, dht11_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : PC13 */
-  GPIO_InitStruct.Pin = GPIO_PIN_13;
+  /*Configure GPIO pin : led_Pin */
+  GPIO_InitStruct.Pin = led_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(led_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PA1 PA8 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_8;
+  /*Configure GPIO pins : ds18b20_Pin relay_Pin buzzer_Pin */
+  GPIO_InitStruct.Pin = ds18b20_Pin|relay_Pin|buzzer_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PB3 */
-  GPIO_InitStruct.Pin = GPIO_PIN_3;
+  /*Configure GPIO pin : dht11_Pin */
+  GPIO_InitStruct.Pin = dht11_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  HAL_GPIO_Init(dht11_GPIO_Port, &GPIO_InitStruct);
 
 }
 

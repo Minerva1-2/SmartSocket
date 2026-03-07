@@ -36,6 +36,7 @@
 #include "usart.h"
 #include "esp8266.h"
 #include "state_led.h"
+#include "oled_iic.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -57,6 +58,17 @@
 /* USER CODE BEGIN Variables */
 //在线状态标志位 (1=在线, 0=掉线)
 static uint8_t mqtt_online_flag = 0; 
+static char displayBuf[20];
+
+typedef struct {
+    float voltage;
+    float current;
+    float power;
+    float temp;
+} OLED_Data_t;
+OLED_Data_t oled_data = {0};
+
+SensorMsg_t global_msg;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -76,6 +88,12 @@ QueueHandle_t xQueuePZEM;
 //串口打印
 void PrintTask(void *argument);
 void xUploadTask(void *argument);
+//oled显示
+void xOLEDTask(void *argument);
+
+// 【新增】MQTT 接收与解析任务声明
+void xMqttRxTask(void *argument); 
+
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
@@ -89,7 +107,7 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-
+		
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -140,6 +158,8 @@ void MX_FREERTOS_Init(void) {
 	xTaskCreate(PrintTask, "PrintTask", 256, NULL, osPriorityNormal, NULL);
 	//esp8266任务
 	xTaskCreate(xUploadTask, "esp8266Task", 512, NULL, osPriorityNormal, NULL);
+	//MQTT解析任务
+	xTaskCreate(xMqttRxTask, "mqttRxTask", 256, NULL, osPriorityAboveNormal, NULL);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -158,11 +178,41 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
-	
+	OLED_Init();     
+    OLED_Clear(); 
   /* Infinite loop */
   for(;;)
   {
-	  
+        float oled_voltage = oled_data.voltage;
+        float oled_current = oled_data.current;
+        float oled_power  = oled_data.power;
+        float oled_temp    = oled_data.temp; 👆
+
+        /* --- 1. 显示电压 --- */
+        int v_int = (int)oled_voltage;                      
+        int v_dec = (int)(oled_voltage * 10) % 10;          
+        sprintf(displayBuf, "V: %d.%d V    ", v_int, v_dec);
+        OLED_ShowString(0, 0, displayBuf, 16); 
+
+        /* --- 2. 显示电流 --- */
+        int c_int = (int)oled_current;                      
+        int c_dec = (int)(oled_current * 100) % 100;        
+        sprintf(displayBuf, "I: %d.%02d A   ", c_int, c_dec);
+        OLED_ShowString(0, 2, displayBuf, 16); 
+
+        /* --- 3. 显示功率 --- */
+        int e_int = (int)oled_power;                      
+        int e_dec = (int)(oled_power * 10) % 10;          
+        sprintf(displayBuf, "E: %d.%d W ", e_int, e_dec);
+        OLED_ShowString(0, 4, displayBuf, 16); 
+
+        /* --- 4. 显示温度 --- */
+        int t_int = (int)oled_temp;                      
+        int t_dec = (int)(oled_temp * 10) % 10;          
+        sprintf(displayBuf, "T: %d.%d C   ", t_int, t_dec); 
+        OLED_ShowString(0, 6, displayBuf, 16); 
+
+        vTaskDelay(100); 
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -177,31 +227,43 @@ void PrintTask(void *argument)
     
     while(1)
     {
-        if(((xQueueReceive(xQueueSensor, &msg, portMAX_DELAY) == pdPASS)) && (mqtt_online_flag == 1))
+        if(((xQueueReceive(xQueueSensor, &msg, portMAX_DELAY) == pdPASS)))
         {
-            switch(msg.source)
-            {
-                case SRC_DHT11:
-                    printf("[DHT11]   Temp: %.1f C, Humi: %.1f %%\r\n", 
-                           msg.data.dht11.temp, msg.data.dht11.humi);
-                    break;
-
-                case SRC_DS18B20:
-                    printf("[DS18B20] Temp: %.2f C\r\n", 
-                           msg.data.ds18b20_temp);
-                    break;
-
-                case SRC_PZEM:
-                    printf("=== PZEM-004T ===\r\n");
-                    printf(" Volt  : %.1f V\r\n", msg.data.pzem.voltage);
-                    printf(" Curr  : %.3f A\r\n", msg.data.pzem.current);
-                    printf(" Power : %.1f W\r\n", msg.data.pzem.power);
-                    printf(" Energy: %.0f Wh\r\n", msg.data.pzem.energy);
-                    printf(" Freq  : %.1f Hz\r\n", msg.data.pzem.frequency);
-                    printf(" PF    : %.2f\r\n", msg.data.pzem.pf);
-                    printf("=================\r\n");
-                    break; 
+			if(msg.source == SRC_DHT11) {
+                oled_data.temp = msg.data.dht11.temp; // 更新温度
             }
+            else if(msg.source == SRC_PZEM) {
+                oled_data.voltage = msg.data.pzem.voltage; // 更新电压
+                oled_data.current = msg.data.pzem.current; // 更新电流
+                oled_data.power  = msg.data.pzem.power;  // 更新电能
+            }
+			
+			if (mqtt_online_flag == 1)
+			{
+				switch(msg.source)
+				{
+					case SRC_DHT11:
+						printf("[DHT11]   Temp: %.1f C, Humi: %.1f %%\r\n", 
+							   msg.data.dht11.temp, msg.data.dht11.humi);
+						break;
+
+					case SRC_DS18B20:
+						printf("[DS18B20] Temp: %.2f C\r\n", 
+							   msg.data.ds18b20_temp);
+						break;
+
+					case SRC_PZEM:
+						printf("=== PZEM-004T ===\r\n");
+						printf(" Volt  : %.1f V\r\n", msg.data.pzem.voltage);
+						printf(" Curr  : %.3f A\r\n", msg.data.pzem.current);
+						printf(" Power : %.1f W\r\n", msg.data.pzem.power);
+						printf(" Energy: %.0f Wh\r\n", msg.data.pzem.energy);
+						printf(" Freq  : %.1f Hz\r\n", msg.data.pzem.frequency);
+						printf(" PF    : %.2f\r\n", msg.data.pzem.pf);
+						printf("=================\r\n");
+						break; 
+				}
+			}
         }
     }
 }
@@ -299,6 +361,20 @@ void xUploadTask(void *argument)
         }
     }
 }
+
+// ======================================================================
+// 【新增】MQTT 接收解析与继电器控制任务
+// ======================================================================
+void xMqttRxTask(void *argument)
+{
+    printf("MQTT RX Task Started.\r\n");
+    
+    for(;;)
+    {
+        ESP_Process_Rx_Data();
+        // 延时 50ms。既不占用太多CPU资源，又能实现高灵敏度响应
+        vTaskDelay(pdMS_TO_TICKS(50));
+    }
+}
+
 /* USER CODE END Application */
-
-

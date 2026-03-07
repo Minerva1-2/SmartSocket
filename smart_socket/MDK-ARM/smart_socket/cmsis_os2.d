@@ -1,8 +1,8 @@
 smart_socket\cmsis_os2.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c
-smart_socket\cmsis_os2.o: D:\keil\core\ARM\ARMCC\Bin\..\include\string.h
+smart_socket\cmsis_os2.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
 smart_socket\cmsis_os2.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h
-smart_socket\cmsis_os2.o: D:\keil\core\ARM\ARMCC\Bin\..\include\stdint.h
-smart_socket\cmsis_os2.o: D:\keil\core\ARM\ARMCC\Bin\..\include\stddef.h
+smart_socket\cmsis_os2.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
+smart_socket\cmsis_os2.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stddef.h
 smart_socket\cmsis_os2.o: ../Drivers/CMSIS/Include/cmsis_compiler.h
 smart_socket\cmsis_os2.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
 smart_socket\cmsis_os2.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h

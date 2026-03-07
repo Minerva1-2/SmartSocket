@@ -1,7 +1,7 @@
 smart_socket\state_led.o: ..\Core\Src\state_led.c
 smart_socket\state_led.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/freertos.h
-smart_socket\state_led.o: D:\keil\core\ARM\ARMCC\Bin\..\include\stddef.h
-smart_socket\state_led.o: D:\keil\core\ARM\ARMCC\Bin\..\include\stdint.h
+smart_socket\state_led.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stddef.h
+smart_socket\state_led.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
 smart_socket\state_led.o: ../Core/Inc/FreeRTOSConfig.h
 smart_socket\state_led.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
 smart_socket\state_led.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h

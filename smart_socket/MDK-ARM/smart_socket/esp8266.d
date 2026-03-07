@@ -8,14 +8,14 @@ smart_socket\esp8266.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h
 smart_socket\esp8266.o: ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h
 smart_socket\esp8266.o: ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h
 smart_socket\esp8266.o: ../Drivers/CMSIS/Include/core_cm3.h
-smart_socket\esp8266.o: D:\keil\core\ARM\ARMCC\Bin\..\include\stdint.h
+smart_socket\esp8266.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
 smart_socket\esp8266.o: ../Drivers/CMSIS/Include/cmsis_version.h
 smart_socket\esp8266.o: ../Drivers/CMSIS/Include/cmsis_compiler.h
 smart_socket\esp8266.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
 smart_socket\esp8266.o: ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/system_stm32f1xx.h
 smart_socket\esp8266.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h
 smart_socket\esp8266.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-smart_socket\esp8266.o: D:\keil\core\ARM\ARMCC\Bin\..\include\stddef.h
+smart_socket\esp8266.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stddef.h
 smart_socket\esp8266.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc_ex.h
 smart_socket\esp8266.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h
 smart_socket\esp8266.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio_ex.h
@@ -31,9 +31,9 @@ smart_socket\esp8266.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h
 smart_socket\esp8266.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
 smart_socket\esp8266.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
 smart_socket\esp8266.o: ../Core/Inc/usart.h
-smart_socket\esp8266.o: D:\keil\core\ARM\ARMCC\Bin\..\include\string.h
-smart_socket\esp8266.o: D:\keil\core\ARM\ARMCC\Bin\..\include\stdio.h
-smart_socket\esp8266.o: D:\keil\core\ARM\ARMCC\Bin\..\include\stdlib.h
+smart_socket\esp8266.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+smart_socket\esp8266.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
+smart_socket\esp8266.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdlib.h
 smart_socket\esp8266.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
 smart_socket\esp8266.o: ../Core/Inc/FreeRTOSConfig.h
 smart_socket\esp8266.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
@@ -46,3 +46,5 @@ smart_socket\esp8266.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.
 smart_socket\esp8266.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 smart_socket\esp8266.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 smart_socket\esp8266.o: ../Core/Inc/state_led.h
+smart_socket\esp8266.o: ../Core/Inc/buzzer.h
+smart_socket\esp8266.o: ../Core/Inc/gpio.h

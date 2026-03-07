@@ -1,8 +1,8 @@
 smart_socket\event_groups.o: ../Middlewares/Third_Party/FreeRTOS/Source/event_groups.c
-smart_socket\event_groups.o: D:\keil\core\ARM\ARMCC\Bin\..\include\stdlib.h
+smart_socket\event_groups.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdlib.h
 smart_socket\event_groups.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
-smart_socket\event_groups.o: D:\keil\core\ARM\ARMCC\Bin\..\include\stddef.h
-smart_socket\event_groups.o: D:\keil\core\ARM\ARMCC\Bin\..\include\stdint.h
+smart_socket\event_groups.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stddef.h
+smart_socket\event_groups.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
 smart_socket\event_groups.o: ../Core/Inc/FreeRTOSConfig.h
 smart_socket\event_groups.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
 smart_socket\event_groups.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h

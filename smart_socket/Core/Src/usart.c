@@ -32,10 +32,6 @@ UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
-#define ESP_RX_MAX 512          // 缓冲区最大长度
-uint8_t esp_rx_buf[ESP_RX_MAX]; // 接收缓冲区
-uint16_t esp_rx_index = 0;      // 缓冲区索引
-uint8_t esp_byte_tmp;           // 单字节接收缓存
 /* USART1 init function */
 
 void MX_USART1_UART_Init(void)
@@ -292,6 +288,14 @@ int fputc(int ch, FILE *f)
     HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
     return ch;
 }
+// 1. 定义缓冲区最大长度
+#define ESP_RX_MAX 512
+
+// 2. 真正定义这些变量（为其分配内存空间）
+uint8_t esp_rx_buf[ESP_RX_MAX];
+uint16_t esp_rx_index = 0;
+uint8_t esp_byte_tmp;
+
 //pzem-004t串口接收
 extern SemaphoreHandle_t pzem_rx_sem;
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
@@ -323,14 +327,22 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
-	if(huart->Instance == USART2)
+    // ESP8266 的串口 (USART2) 出错
+    if(huart->Instance == USART2)
     {
+        // 清除 USART2 的溢出和错误标志，防止接收中断永久卡死！
+        __HAL_UART_CLEAR_OREFLAG(huart);
+        __HAL_UART_CLEAR_NEFLAG(huart);
+        __HAL_UART_CLEAR_FEFLAG(huart);
+        __HAL_UART_CLEAR_PEFLAG(huart);
+        
         if(esp_rx_index < ESP_RX_MAX - 1) {
             esp_rx_buf[esp_rx_index++] = esp_byte_tmp;
             esp_rx_buf[esp_rx_index] = 0;
         }
         HAL_UART_Receive_IT(&huart2, &esp_byte_tmp, 1);
     }
+    
     // 如果是 PZEM 的串口 (USART3) 出错
     if(huart->Instance == USART3)
     {   
@@ -339,9 +351,6 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
         __HAL_UART_CLEAR_NEFLAG(huart);
         __HAL_UART_CLEAR_FEFLAG(huart);
         __HAL_UART_CLEAR_PEFLAG(huart);
-        
-        // 这里的关键是：HAL库会自动把状态设回 READY，
-        // 这样下一次调用 HAL_UART_Receive_IT 时就能成功了。
     }
 }
 /* USER CODE END 1 */

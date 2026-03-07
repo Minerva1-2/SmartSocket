@@ -27,6 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include "buzzer.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -97,8 +98,10 @@ int main(void)
   MX_USART3_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  printf("freertos init OK!\r\n");
-  printf("\r\n");
+	buzzer_on();
+	printf("freertos init OK!\r\n");
+	printf("\r\n");
+  
   /* USER CODE END 2 */
 
   /* Init scheduler */

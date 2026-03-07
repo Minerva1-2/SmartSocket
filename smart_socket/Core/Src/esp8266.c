@@ -7,6 +7,7 @@
 #include "task.h"
 #include "semphr.h"
 #include "state_led.h"
+#include "buzzer.h"
 
 extern UART_HandleTypeDef huart2;
 extern uint8_t esp_rx_buf[];
@@ -17,6 +18,24 @@ extern uint8_t esp_byte_tmp;
 volatile uint8_t mqtt_ready_flag = 0; 
 
 SemaphoreHandle_t xESPMutex = NULL;
+
+void ESP_Process_Rx_Data(void);
+
+// ==========================================================
+// 二进制内存字符串查找 (无视 0x00 中断)
+// ==========================================================
+char* ESP_Memstr(uint8_t* buf, uint16_t buf_len, const char* str) {
+    uint16_t str_len = strlen(str);
+    if (str_len == 0 || buf_len < str_len) return NULL;
+    for (uint16_t i = 0; i <= buf_len - str_len; i++) {
+        uint16_t j;
+        for (j = 0; j < str_len; j++) {
+            if (buf[i + j] != str[j]) break;
+        }
+        if (j == str_len) return (char*)&buf[i]; // 找到了！
+    }
+    return NULL; // 没找到
+}
 
 void ESP_Clear_Rx(void) {
     memset(esp_rx_buf, 0, 512);
@@ -29,25 +48,34 @@ void ESP_Start_Receive(void) {
 
 // 发送 AT 指令并等待响应 
 uint8_t ESP_Send_Cmd(char *cmd, char *ack, uint16_t timeout_ms) {
-    // 1. 强制清除串口错误标志 (防止 ORE/FE/NE 导致中断锁死)
     __HAL_UART_CLEAR_OREFLAG(&huart2);
     __HAL_UART_CLEAR_NEFLAG(&huart2);
     __HAL_UART_CLEAR_FEFLAG(&huart2);
     __HAL_UART_CLEAR_IDLEFLAG(&huart2);
-    // 2. 清空缓冲区
+
+    // 🚨 升级防误杀：使用 ESP_Memstr，突破 \0 限制！
+    if(ESP_Memstr(esp_rx_buf, esp_rx_index, "+IPD,") != NULL || ESP_Memstr(esp_rx_buf, esp_rx_index, "relay") != NULL) {
+        vTaskDelay(pdMS_TO_TICKS(100)); 
+        ESP_Process_Rx_Data();          
+    }
+
     ESP_Clear_Rx();
-    // 3. 确保接收中断是开启的 (重新启动接收)
     HAL_UART_Receive_IT(&huart2, &esp_byte_tmp, 1);
-    // 4. 发送指令
+    
     if (cmd != NULL) {
         HAL_UART_Transmit(&huart2, (uint8_t *)cmd, strlen(cmd), 100);
         HAL_UART_Transmit(&huart2, (uint8_t *)"\r\n", 2, 100);
     }
 
-    // 5. 等待回复
     uint16_t time = 0;
     while(time < timeout_ms) {
         if(strstr((const char*)esp_rx_buf, ack) != NULL) return 1;
+        
+        // 🚨 同样在这里升级
+        if(ESP_Memstr(esp_rx_buf, esp_rx_index, "+IPD,") != NULL || ESP_Memstr(esp_rx_buf, esp_rx_index, "relay") != NULL) {
+            ESP_Process_Rx_Data();
+        }
+
         vTaskDelay(pdMS_TO_TICKS(50));
         time += 50;
     }
@@ -67,7 +95,7 @@ uint8_t ESP_Send_Packet(uint8_t *data, uint16_t len) {
         
         if(ESP_Send_Cmd(cmd, ">", 2000)) { // 稍微加大超时到2s
             HAL_UART_Transmit(&huart2, data, len, 1000);
-            vTaskDelay(pdMS_TO_TICKS(100)); // 等待发送完成
+            vTaskDelay(pdMS_TO_TICKS(300)); // 等待发送完成
             status = 1; // 成功
         } else {
             printf("[ESP] Error: Wait '>' failed. Connection lost...\r\n");
@@ -132,6 +160,41 @@ void MQTT_Connect(void) {
     
     printf("[MQTT] Sending Connect Packet to Aliyun...\r\n");
     ESP_Send_Packet(tx_buf, pos);
+}
+
+// ===============================================
+// 标准 MQTT 订阅报文 (Subscribe)
+// ===============================================
+uint8_t MQTT_Subscribe_Packet(char *topic, uint8_t qos) {
+    static uint8_t tx_buf[512];
+    uint16_t pos = 0;
+    uint16_t topic_len = strlen(topic);
+    
+    // 剩余长度计算: 报文标识符(2) + 主题长度(2) + 主题字符串 + QoS(1)
+    uint16_t rem_len = 2 + 2 + topic_len + 1;
+    
+    // 1. Fixed Header (0x82 = Subscribe 请求)
+    tx_buf[pos++] = 0x82;
+    pos += MQTT_Encode_Length(&tx_buf[pos], rem_len);
+    
+    // 2. Variable Header: 报文标识符 Packet ID (固定用 0x00 0x01)
+    tx_buf[pos++] = 0x00; 
+    tx_buf[pos++] = 0x01;
+    
+    // 3. Payload: Topic Length
+    tx_buf[pos++] = topic_len >> 8; 
+    tx_buf[pos++] = topic_len & 0xFF;
+    
+    // 4. Payload: Topic String
+    memcpy(&tx_buf[pos], topic, topic_len); 
+    pos += topic_len;
+    
+    // 5. Payload: Requested QoS
+    tx_buf[pos++] = qos; 
+    
+    printf("[MQTT] Subscribing to: %s (QoS: %d)\r\n", topic, qos);
+    
+    return ESP_Send_Packet(tx_buf, pos);
 }
 
 uint8_t MQTT_Publish_Packet(char *topic, char *json) {
@@ -226,13 +289,22 @@ uint8_t ESP_Init_MQTT(void) {
         
         if(strstr((char*)esp_rx_buf, "CLOSED")) {
              printf("[Error] Server closed connection. (Auth Failed...)\r\n");
-			aliyun_disconnected();
+			 aliyun_disconnected();
 			
              return 0;
         } else {
              printf("[Success] MQTT Connected!\r\n");
-			aliyun_connected();
+			 aliyun_connected();
 			
+             // ==========================================
+             // 连接成功后发送订阅报文
+             // ==========================================
+             vTaskDelay(pdMS_TO_TICKS(500)); 
+             MQTT_Subscribe_Packet(TOPIC_SUB, 0); 
+			
+			vTaskDelay(pdMS_TO_TICKS(1000));
+             // ==========================================
+
              return 1;
         }
     } else {
@@ -241,5 +313,54 @@ uint8_t ESP_Init_MQTT(void) {
 		aliyun_disconnected();
 		
         return 0;
+    }
+}
+
+// ===============================================
+// 处理接收到的 MQTT 下发数据
+// ===============================================
+void ESP_Process_Rx_Data(void) {
+    if (esp_rx_index == 0) return;
+
+    // 🚨 摒弃 strstr，全面改用 ESP_Memstr！就算前面有一万个乱码和 0x00，也能精准揪出指令！
+    
+    if (ESP_Memstr(esp_rx_buf, esp_rx_index, "\"relay\":0") != NULL || 
+        ESP_Memstr(esp_rx_buf, esp_rx_index, "\"relay\": 0") != NULL) {
+        
+        printf("\r\n===================================\r\n");
+        printf("[MQTT RX] 成功捕获指令 -> 🚨 自动断开继电器 (OFF)\r\n");
+        printf("===================================\r\n");
+        
+        buzzer_off();
+        
+        ESP_Clear_Rx();
+        return;
+    }
+    else if (ESP_Memstr(esp_rx_buf, esp_rx_index, "\"relay\":1") != NULL || 
+             ESP_Memstr(esp_rx_buf, esp_rx_index, "\"relay\": 1") != NULL) {
+             
+        printf("\r\n===================================\r\n");
+        printf("[MQTT RX] 成功捕获指令 -> ⚡ 恢复通电 (ON)\r\n");
+        printf("===================================\r\n");
+        
+        buzzer_on();
+        
+        ESP_Clear_Rx();
+        return;
+    }
+
+    // 清理无用的确认包
+    char *ipd_ptr = ESP_Memstr(esp_rx_buf, esp_rx_index, "+IPD,");
+    if (ipd_ptr != NULL) {
+        int ipd_len = atoi(ipd_ptr + 5); 
+        if (ipd_len > 0 && ipd_len < 10) {
+            ESP_Clear_Rx();
+            return;
+        }
+    }
+    
+    // 防卡死保护
+    if (esp_rx_index > 250) {
+        ESP_Clear_Rx();
     }
 }

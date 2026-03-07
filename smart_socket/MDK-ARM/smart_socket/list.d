@@ -1,8 +1,8 @@
 smart_socket\list.o: ../Middlewares/Third_Party/FreeRTOS/Source/list.c
-smart_socket\list.o: D:\keil\core\ARM\ARMCC\Bin\..\include\stdlib.h
+smart_socket\list.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdlib.h
 smart_socket\list.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
-smart_socket\list.o: D:\keil\core\ARM\ARMCC\Bin\..\include\stddef.h
-smart_socket\list.o: D:\keil\core\ARM\ARMCC\Bin\..\include\stdint.h
+smart_socket\list.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stddef.h
+smart_socket\list.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
 smart_socket\list.o: ../Core/Inc/FreeRTOSConfig.h
 smart_socket\list.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
 smart_socket\list.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h

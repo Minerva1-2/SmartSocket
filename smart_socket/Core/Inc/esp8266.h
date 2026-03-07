@@ -6,8 +6,8 @@
 // ==========================================
 // 1. WiFi 配置
 // ==========================================
-#define WIFI_SSID       "ChinaNet-301"       
-#define WIFI_PASS       "LXX18919062956"     
+#define WIFI_SSID       "Minerva"       
+#define WIFI_PASS       "ykf040505"     
 
 // ==========================================
 // 2. 自建 MQTT 服务器信息
@@ -32,5 +32,6 @@
 uint8_t ESP_Init_MQTT(void); 
 uint8_t ESP_MQTT_Publish(char *json_data);
 uint8_t ESP_Send_Packet(uint8_t *data, uint16_t len);
+void ESP_Process_Rx_Data(void);
 
 #endif

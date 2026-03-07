@@ -10,14 +10,14 @@
       <TargetName>smart_socket</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060750::V5.06 update 6 (build 750)::.\ARMCC</pCCUsed>
+      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARM_Compiler_5.06u7</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32F103C8</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F1xx_DFP.2.4.1</PackID>
-          <PackURL>https://www.keil.com/pack/</PackURL>
+          <PackID>Keil.STM32F1xx_DFP.2.3.0</PackID>
+          <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000-0x20004FFF) IROM(0x8000000-0x800FFFF) CLOCK(8000000) CPUTYPE("Cortex-M3") TZ</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -138,10 +138,10 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2V8M.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
-          <pFcarmOut></pFcarmOut>
-          <pFcarmGrp></pFcarmGrp>
+          <pFcarmOut>smart_socket.c</pFcarmOut>
+          <pFcarmGrp>Application/MDK-ARM</pFcarmGrp>
           <pFcArmRoot></pFcArmRoot>
           <FcArmLst>0</FcArmLst>
         </Utilities>
@@ -329,7 +329,7 @@
             <uC99>1</uC99>
             <uGnu>0</uGnu>
             <useXO>0</useXO>
-            <v6Lang>5</v6Lang>
+            <v6Lang>3</v6Lang>
             <v6LangP>3</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xB</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/STM32F1xx_HAL_Driver/Inc;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/STM32F1xx_HAL_Driver/Inc;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;../Core/Src</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -389,6 +389,11 @@
               <FileType>2</FileType>
               <FilePath>startup_stm32f103xb.s</FilePath>
             </File>
+            <File>
+              <FileName>smart_socket.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>smart_socket.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -418,6 +423,31 @@
               <FileName>sensor_msg.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\Core\Inc\sensor_msg.h</FilePath>
+            </File>
+            <File>
+              <FileName>esp8266.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\esp8266.c</FilePath>
+            </File>
+            <File>
+              <FileName>state_led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\state_led.c</FilePath>
+            </File>
+            <File>
+              <FileName>oled_iic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\oled_iic.c</FilePath>
+            </File>
+            <File>
+              <FileName>oled_iic.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Core\Inc\oled_iic.h</FilePath>
+            </File>
+            <File>
+              <FileName>oled_iic_font.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Core\Inc\oled_iic_font.h</FilePath>
             </File>
             <File>
               <FileName>main.c</FileName>
@@ -509,16 +539,6 @@
               <FileName>stm32f1xx_hal_msp.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32f1xx_hal_msp.c</FilePath>
-            </File>
-            <File>
-              <FileName>esp8266.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Core\Src\esp8266.c</FilePath>
-            </File>
-            <File>
-              <FileName>state_led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Core\Src\state_led.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -779,8 +799,8 @@
   <RTE>
     <apis/>
     <components>
-      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="4.3.0" condition="CMSIS Core">
-        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="4.5.0"/>
+      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="6.1.0" condition="ARMv6_7_8-M Device">
+        <package name="CMSIS" schemaVersion="1.7.36" url="https://www.keil.com/pack/" vendor="ARM" version="6.1.0"/>
         <targetInfos>
           <targetInfo name="smart_socket"/>
         </targetInfos>

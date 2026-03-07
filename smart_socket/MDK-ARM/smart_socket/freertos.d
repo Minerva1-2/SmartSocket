@@ -1,7 +1,7 @@
 smart_socket\freertos.o: ../Core/Src/freertos.c
 smart_socket\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
-smart_socket\freertos.o: D:\keil\core\ARM\ARMCC\Bin\..\include\stddef.h
-smart_socket\freertos.o: D:\keil\core\ARM\ARMCC\Bin\..\include\stdint.h
+smart_socket\freertos.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stddef.h
+smart_socket\freertos.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
 smart_socket\freertos.o: ../Core/Inc/FreeRTOSConfig.h
 smart_socket\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
 smart_socket\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
@@ -40,8 +40,8 @@ smart_socket\freertos.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_e
 smart_socket\freertos.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
 smart_socket\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h
 smart_socket\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h
-smart_socket\freertos.o: D:\keil\core\ARM\ARMCC\Bin\..\include\stdio.h
-smart_socket\freertos.o: D:\keil\core\ARM\ARMCC\Bin\..\include\string.h
+smart_socket\freertos.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
+smart_socket\freertos.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
 smart_socket\freertos.o: ../Core/Inc/buzzer.h
 smart_socket\freertos.o: ../Core/Inc/gpio.h
 smart_socket\freertos.o: ../Core/Inc/ds18b20.h
@@ -53,3 +53,4 @@ smart_socket\freertos.o: ../Core/Inc/sensor_msg.h
 smart_socket\freertos.o: ../Core/Inc/usart.h
 smart_socket\freertos.o: ../Core/Inc/esp8266.h
 smart_socket\freertos.o: ../Core/Inc/state_led.h
+smart_socket\freertos.o: ../Core/Inc/oled_iic.h
